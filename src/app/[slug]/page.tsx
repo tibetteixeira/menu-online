@@ -2,7 +2,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 
 import { getRestaurantBySlug } from "../data/get-restaurant-by-slug";
-import ConsumptionTypeOption from "./components/consumption-type-optino";
+import ConsumptionTypeOption from "./components/consumption-type-option";
 
 interface RestaurantPageProps {
   params: Promise<{ slug: string }>;

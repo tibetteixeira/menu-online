@@ -27,7 +27,7 @@ const ConsumptionTypeOption = ({
           <Image src={imageUrl} fill className="object-contain" alt={alt} />
         </div>
 
-        <Button variant="secondary" className="rounded-full">
+        <Button variant="secondary" className="rounded-full" asChild>
           <Link href={`/${slug}/menu?consumptionType=${option}`}>
             {buttonText}
           </Link>
