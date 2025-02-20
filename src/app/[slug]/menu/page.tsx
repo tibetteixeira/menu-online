@@ -1,5 +1,10 @@
 import { notFound } from "next/navigation";
 
+import { getRestaurantWithCategoriesAndProductsBySlug } from "@/app/data/get-restaurant-by-slug";
+
+import RestaurantCategories from "./components/categories";
+import RestaurantHeader from "./components/header";
+
 interface RestaurantMenuPageProps {
   params: Promise<{ slug: string }>;
   searchParams: Promise<{ consumptionType: string }>;
@@ -20,10 +25,17 @@ const RestaurantMenuPage = async ({
     return notFound();
   }
 
+  const restaurant = await getRestaurantWithCategoriesAndProductsBySlug(slug);
+
+  if (!restaurant) {
+    return notFound();
+  }
+
   return (
-    <h1>
-      {slug} - {consumptionType}
-    </h1>
+    <div>
+      <RestaurantHeader restaurant={restaurant} />
+      <RestaurantCategories restaurant={restaurant} />
+    </div>
   );
 };
 

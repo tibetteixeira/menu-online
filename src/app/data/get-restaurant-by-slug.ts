@@ -7,3 +7,20 @@ export const getRestaurantBySlug = async (slug: string) => {
     },
   });
 };
+
+export const getRestaurantWithCategoriesAndProductsBySlug = async (
+  slug: string,
+) => {
+  return await db.restaurant.findUnique({
+    where: {
+      slug,
+    },
+    include: {
+      menuCategories: {
+        include: {
+          products: true,
+        },
+      },
+    },
+  });
+};
