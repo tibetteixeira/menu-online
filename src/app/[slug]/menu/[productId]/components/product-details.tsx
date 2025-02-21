@@ -7,6 +7,7 @@ import { useState } from "react";
 
 import { formatCurrency } from "@/app/helpers/format-currency";
 import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface ProductDetailsProps {
   product: Prisma.ProductGetPayload<{
@@ -29,8 +30,8 @@ const ProductDetails = ({ product }: ProductDetailsProps) => {
     setQuantity((prev) => Math.max(1, prev - 1));
 
   return (
-    <div className="relative z-50 mt-[-1.5rem] flex flex-auto flex-col rounded-t-3xl p-5">
-      <div className="flex-auto">
+    <div className="relative z-50 mt-[-1.5rem] flex flex-auto flex-col overflow-hidden rounded-t-3xl p-5">
+      <div className="flex-auto overflow-hidden">
         <div className="flex items-center gap-1.5">
           <Image
             src={product.restaurant.avatarImageUrl}
@@ -50,7 +51,7 @@ const ProductDetails = ({ product }: ProductDetailsProps) => {
           <h3 className="text-xl font-semibold">
             {formatCurrency(product.price)}
           </h3>
-          <div className="flex items-center gap-3 text-center">
+          <div className="mt-5 flex items-center gap-3 text-center">
             <Button
               variant="outline"
               onClick={handleDecreaseQuantity}
@@ -69,26 +70,33 @@ const ProductDetails = ({ product }: ProductDetailsProps) => {
           </div>
         </div>
 
-        <div className="mt-6 space-y-3">
-          <h4 className="font-semibold">Sobre</h4>
-          <p className="text-sm text-muted-foreground">{product.description}</p>
-        </div>
-
-        {product.ingredients.length > 0 && (
+        <ScrollArea className="h-full">
           <div className="mt-6 space-y-3">
-            <div className="flex items-center gap-1.5">
-              <ChefHatIcon size={18} />
-              <h4 className="font-semibold">Ingredientes</h4>
-            </div>
-            <ul className="list-disc px-5 text-sm text-muted-foreground">
-              {product.ingredients.map((ingredient) => (
-                <li key={ingredient} className="text-sm text-muted-foreground">
-                  {ingredient}
-                </li>
-              ))}
-            </ul>
+            <h4 className="font-semibold">Sobre</h4>
+            <p className="text-sm text-muted-foreground">
+              {product.description}
+            </p>
           </div>
-        )}
+
+          {product.ingredients.length > 0 && (
+            <div className="mt-6 space-y-3">
+              <div className="flex items-center gap-1.5">
+                <ChefHatIcon size={18} />
+                <h4 className="font-semibold">Ingredientes</h4>
+              </div>
+              <ul className="list-disc px-5 text-sm text-muted-foreground">
+                {product.ingredients.map((ingredient) => (
+                  <li
+                    key={ingredient}
+                    className="text-sm text-muted-foreground"
+                  >
+                    {ingredient}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </ScrollArea>
       </div>
 
       <Button className="mt-6 w-full rounded-full">Adicionar à sacola</Button>
