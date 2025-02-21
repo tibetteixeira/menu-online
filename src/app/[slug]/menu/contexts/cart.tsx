@@ -31,7 +31,21 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [products, setProducts] = useState<CartProduct[]>([]);
   const toggleCart = () => setIsOpen((prev) => !prev);
-  const addProductToCart = (product: CartProduct) => {};
+  const addProductToCart = (product: CartProduct) => {
+    const existingProduct = products.find((p) => p.id === product.id);
+
+    if (existingProduct) {
+      setProducts(
+        products.map((p) =>
+          p.id === product.id
+            ? { ...p, quantity: p.quantity + product.quantity }
+            : p,
+        ),
+      );
+    } else {
+      setProducts([...products, { ...product, quantity: product.quantity }]);
+    }
+  };
   const removeProductFromCart = (productId: string) => {};
   const increaseProductQuantity = (productId: string) => {};
   const decreaseProductQuantity = (productId: string) => {};
