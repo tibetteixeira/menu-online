@@ -7,3 +7,20 @@ export const getProductById = async (id: string) => {
     },
   });
 };
+
+export const getProductWithRestaurantById = async (id: string) => {
+  return await db.product.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      restaurant: {
+        select: {
+          avatarImageUrl: true,
+          name: true,
+          slug: true,
+        },
+      },
+    },
+  });
+};
