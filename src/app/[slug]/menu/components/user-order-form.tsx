@@ -2,9 +2,12 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ConsumptionType } from "@prisma/client";
+import { Loader2Icon } from "lucide-react";
 import { useParams, useSearchParams } from "next/navigation";
+import { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { PatternFormat } from "react-number-format";
+import { toast } from "sonner";
 import { z } from "zod";
 
 import { isValidCPF } from "@/app/helpers/cpf";
@@ -27,15 +30,12 @@ const formSchema = z.object({
   name: z.string().trim().min(3, {
     message: "O nome é obrigatório",
   }),
-  cpf: z
-    .string()
-    .trim()
-    .min(1, {
-      message: "O CPF é obrigatório",
-    })
-    .refine((value) => isValidCPF(value), {
-      message: "CPF inválido",
-    }),
+  cpf: z.string().trim().min(1, {
+    message: "O CPF é obrigatório",
+  })
+  .refine((value) => isValidCPF(value), {
+    message: "CPF inválido",
+  }),
 });
 
 type FormSchema = z.infer<typeof formSchema>;
@@ -43,6 +43,7 @@ type FormSchema = z.infer<typeof formSchema>;
 const UserOrderForm = () => {
   const { products } = useCart();
   const { closeDrawer } = useDrawer();
+  const [isPending, startTransition] = useTransition();
 
   const { slug } = useParams<{ slug: string }>();
   const searchParams = useSearchParams();
@@ -61,17 +62,20 @@ const UserOrderForm = () => {
         "consumptionType",
       ) as ConsumptionType;
 
-      await createOrder({
-        customerName: data.name,
-        customerCPF: data.cpf,
-        restaurantSlug: slug,
-        products,
-        consumptionType,
-      });
+      startTransition(async () => {
+        await createOrder({
+          customerName: data.name,
+          customerCPF: data.cpf,
+          restaurantSlug: slug,
+          products,
+          consumptionType,
+        });
 
-      closeDrawer();
+        toast.success("Pedido realizado com sucesso");
+        closeDrawer();
+      });
     } catch (error) {
-      console.error(error);
+      toast.error(`Erro ao realizar pedido`);
     }
   };
 
@@ -110,7 +114,12 @@ const UserOrderForm = () => {
             </FormItem>
           )}
         />
-        <Button className="w-full rounded-full" type="submit">
+        <Button
+          disabled={isPending}
+          className="w-full rounded-full"
+          type="submit"
+        >
+          {isPending && <Loader2Icon className="animate-spin" />}
           Finalizar
         </Button>
       </form>
