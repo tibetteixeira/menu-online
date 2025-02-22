@@ -1,5 +1,3 @@
-import { useContext } from "react";
-
 import { formatCurrency } from "@/app/helpers/format-currency";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -9,13 +7,13 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 
-import { CartContext } from "../contexts/cart";
+import { useCart } from "../contexts/cart";
+import { DrawerProvider } from "../contexts/drawer";
 import CartProcutItemProps from "./cart-product-item";
 import FinishOrderButton from "./finish-order-button";
 
 const CartSheet = () => {
-  const { isOpen, toggleCart, products, calculateTotalOrder } =
-    useContext(CartContext);
+  const { isOpen, toggleCart, products, calculateTotalOrder } = useCart();
 
   return (
     <Sheet open={isOpen} onOpenChange={toggleCart}>
@@ -39,7 +37,9 @@ const CartSheet = () => {
               </div>
             </CardContent>
           </Card>
-          <FinishOrderButton />
+          <DrawerProvider>
+            <FinishOrderButton />
+          </DrawerProvider>
         </div>
       </SheetContent>
     </Sheet>

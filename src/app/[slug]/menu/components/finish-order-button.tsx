@@ -10,13 +10,18 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 
+import { useDrawer } from "../contexts/drawer";
 import UserOrderForm from "./user-order-form";
 
 const FinishOrderButton = () => {
+  const { isDrawerOpen, openDrawer, closeDrawer } = useDrawer();
+
   return (
-    <Drawer>
+    <Drawer open={isDrawerOpen} onOpenChange={(open) => !open && closeDrawer()}>
       <DrawerTrigger asChild>
-        <Button className="w-full rounded-full">Finalizar pedido</Button>
+        <Button onClick={openDrawer} className="w-full rounded-full">
+          Finalizar pedido
+        </Button>
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader>
