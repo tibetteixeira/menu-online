@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
-import { getRestaurantBySlug } from "../data/get-restaurant-by-slug";
+import { getRestaurantBySlug } from "../data/get-restaurant";
 import ConsumptionTypeOption from "./components/consumption-type-option";
 
 interface RestaurantPageProps {
@@ -28,7 +28,7 @@ const RestaurantPage = async ({ params }: RestaurantPageProps) => {
 
         <h2 className="font-semibold">{restaurant.name}</h2>
       </div>
-      <div className="space-y-2 py-24 px-20 text-center">
+      <div className="space-y-2 px-20 py-24 text-center">
         <h3 className="text-2xl font-semibold">Seja bem vindo!</h3>
         <p className="opacity-55">
           Escolha como prefere aproveitar sua refeição.
@@ -36,7 +36,7 @@ const RestaurantPage = async ({ params }: RestaurantPageProps) => {
           Estamos aqui para oferecer praticidade e sabor em cada detalhe
         </p>
       </div>
-      <div className="grid grid-cols-2 gap-4 pt-14 px-6">
+      <div className="grid grid-cols-2 gap-4 px-6 pt-14">
         <ConsumptionTypeOption
           imageUrl="/dine_in.png"
           alt="Para comer aqui"
