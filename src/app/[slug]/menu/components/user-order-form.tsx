@@ -10,7 +10,7 @@ import { PatternFormat } from "react-number-format";
 import { toast } from "sonner";
 import { z } from "zod";
 
-import { isValidCPF } from "@/app/helpers/cpf";
+import { isValidCPF, removePontuation } from "@/app/helpers/cpf";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -30,23 +30,30 @@ const formSchema = z.object({
   name: z.string().trim().min(3, {
     message: "O nome é obrigatório",
   }),
-  cpf: z.string().trim().min(1, {
-    message: "O CPF é obrigatório",
-  })
-  .refine((value) => isValidCPF(value), {
-    message: "CPF inválido",
-  }),
+  cpf: z
+    .string()
+    .trim()
+    .min(1, {
+      message: "O CPF é obrigatório",
+    })
+    .refine((value) => isValidCPF(value), {
+      message: "CPF inválido",
+    }),
 });
 
 type FormSchema = z.infer<typeof formSchema>;
 
 const UserOrderForm = () => {
-  const { products } = useCart();
+  const { products, cleanCart } = useCart();
   const { closeDrawer } = useDrawer();
   const [isPending, startTransition] = useTransition();
 
   const { slug } = useParams<{ slug: string }>();
   const searchParams = useSearchParams();
+
+  const handleRedirectToUserOrders = (userCPF: string, slug: string) => {
+    window.location.replace(`/${slug}/${removePontuation(userCPF)}`);
+  };
 
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
@@ -72,7 +79,10 @@ const UserOrderForm = () => {
         });
 
         toast.success("Pedido realizado com sucesso");
+
         closeDrawer();
+        cleanCart();
+        handleRedirectToUserOrders(data.cpf, slug);
       });
     } catch (error) {
       toast.error(`Erro ao realizar pedido`);
