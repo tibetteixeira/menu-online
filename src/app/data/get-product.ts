@@ -24,3 +24,13 @@ export const getProductWithRestaurantById = async (id: string) => {
     },
   });
 };
+
+export const getProducstById = async (ids: string[]) => {
+  return await db.product.findMany({
+    where: {
+      id: {
+        in: ids,
+      },
+    },
+  });
+};
