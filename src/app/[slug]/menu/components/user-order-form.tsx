@@ -1,6 +1,8 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { ConsumptionType } from "@prisma/client";
+import { useParams, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { PatternFormat } from "react-number-format";
 import { z } from "zod";
@@ -16,6 +18,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+
+import { createOrder } from "../actions/create-order";
+import { useCart } from "../contexts/cart";
+import { useDrawer } from "../contexts/drawer";
 
 const formSchema = z.object({
   name: z.string().trim().min(3, {
@@ -35,6 +41,12 @@ const formSchema = z.object({
 type FormSchema = z.infer<typeof formSchema>;
 
 const UserOrderForm = () => {
+  const { products } = useCart();
+  const { closeDrawer } = useDrawer();
+
+  const { slug } = useParams<{ slug: string }>();
+  const searchParams = useSearchParams();
+
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -43,8 +55,24 @@ const UserOrderForm = () => {
     },
   });
 
-  const onSubmit = (data: FormSchema) => {
-    console.log(data);
+  const onSubmit = async (data: FormSchema) => {
+    try {
+      const consumptionType = searchParams.get(
+        "consumptionType",
+      ) as ConsumptionType;
+
+      await createOrder({
+        customerName: data.name,
+        customerCPF: data.cpf,
+        restaurantSlug: slug,
+        products,
+        consumptionType,
+      });
+
+      closeDrawer();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
