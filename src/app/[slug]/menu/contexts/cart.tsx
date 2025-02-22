@@ -3,7 +3,7 @@
 import { Product } from "@prisma/client";
 import { createContext, ReactNode, useState } from "react";
 
-interface CartProduct extends Product {
+export interface CartProduct extends Product {
   quantity: number;
 }
 
@@ -46,9 +46,27 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       setProducts([...products, { ...product, quantity: product.quantity }]);
     }
   };
-  const removeProductFromCart = (productId: string) => {};
-  const increaseProductQuantity = (productId: string) => {};
-  const decreaseProductQuantity = (productId: string) => {};
+  const removeProductFromCart = (productId: string) => {
+    setProducts(products.filter((product) => product.id !== productId));
+  };
+  const increaseProductQuantity = (productId: string) => {
+    setProducts(
+      products.map((product) =>
+        product.id === productId
+          ? { ...product, quantity: Math.min(99, product.quantity + 1) }
+          : product,
+      ),
+    );
+  };
+  const decreaseProductQuantity = (productId: string) => {
+    setProducts(
+      products.map((product) =>
+        product.id === productId
+          ? { ...product, quantity: Math.max(1, product.quantity - 1) }
+          : product,
+      ),
+    );
+  };
 
   return (
     <CartContext.Provider
