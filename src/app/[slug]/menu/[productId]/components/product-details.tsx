@@ -3,14 +3,14 @@
 import { Prisma } from "@prisma/client";
 import { ChefHatIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import Image from "next/image";
-import { useContext, useState } from "react";
+import { useState } from "react";
 
 import { formatCurrency } from "@/app/helpers/format-currency";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 import CartSheet from "../../components/cart-sheet";
-import { CartContext } from "../../contexts/cart";
+import { useCart } from "../../contexts/cart";
 
 interface ProductDetailsProps {
   product: Prisma.ProductGetPayload<{
@@ -26,7 +26,7 @@ interface ProductDetailsProps {
 }
 
 const ProductDetails = ({ product }: ProductDetailsProps) => {
-  const { toggleCart, addProductToCart } = useContext(CartContext);
+  const { toggleCart, addProductToCart } = useCart();
 
   const [quantity, setQuantity] = useState(1);
 
