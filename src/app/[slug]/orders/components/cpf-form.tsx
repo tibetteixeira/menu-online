@@ -85,7 +85,7 @@ const CpfForm = ({ error }: CpfFormProps) => {
   return (
     <div>
       <Drawer open>
-        <DrawerTrigger>Open</DrawerTrigger>
+        <DrawerTrigger className="hidden">Open</DrawerTrigger>
         <DrawerContent>
           <DrawerHeader>
             <DrawerTitle>Visualizar pedidos</DrawerTitle>
