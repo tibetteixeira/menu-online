@@ -10,7 +10,7 @@ import { PatternFormat } from "react-number-format";
 import { toast } from "sonner";
 import { z } from "zod";
 
-import { isValidCPF, removePontuation } from "@/app/helpers/cpf";
+import { isValidCPF } from "@/app/helpers/cpf";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
-import { createOrder } from "../actions/create-order";
+import { createOrder, redirectToOrderPage } from "../actions/create-order";
 import { useCart } from "../contexts/cart";
 import { useDrawer } from "../contexts/drawer";
 
@@ -51,10 +51,6 @@ const UserOrderForm = () => {
   const { slug } = useParams<{ slug: string }>();
   const searchParams = useSearchParams();
 
-  const handleRedirectToUserOrders = (userCPF: string, slug: string) => {
-    window.location.replace(`/${slug}/${removePontuation(userCPF)}`);
-  };
-
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -82,7 +78,7 @@ const UserOrderForm = () => {
 
         closeDrawer();
         cleanCart();
-        handleRedirectToUserOrders(data.cpf, slug);
+        redirectToOrderPage(data.cpf, slug);
       });
     } catch (error) {
       toast.error(`Erro ao realizar pedido`);

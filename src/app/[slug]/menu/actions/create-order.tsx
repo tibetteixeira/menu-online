@@ -1,7 +1,8 @@
 "use server";
 
 import { ConsumptionType } from "@prisma/client";
-import { notFound } from "next/navigation";
+import { revalidatePath } from "next/cache";
+import { notFound, redirect } from "next/navigation";
 
 import { getProducstById } from "@/app/data/get-product";
 import { getRestaurantBySlug } from "@/app/data/get-restaurant";
@@ -54,4 +55,9 @@ export const createOrder = async (input: CreateOrderInput) => {
       ),
     },
   });
+};
+
+export const redirectToOrderPage = async (cpf: string, slug: string) => {
+  revalidatePath(`/${slug}/orders`);
+  redirect(`/${slug}/orders?cpf=${removePontuation(cpf)}`);
 };
