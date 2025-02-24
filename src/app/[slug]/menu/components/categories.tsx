@@ -5,9 +5,12 @@ import { ClockIcon } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 
+import { formatCurrency } from "@/app/helpers/format-currency";
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
+import { useCart } from "../contexts/cart";
+import CartSheet from "./cart-sheet";
 import Products from "./products";
 
 interface RestaurantCategoriesProps {
@@ -31,6 +34,10 @@ const RestaurantCategories = ({ restaurant }: RestaurantCategoriesProps) => {
   const getCategoryButtonVariant = (category: MenuCategoryWithProducts) => {
     return activeCategory.id === category.id ? "default" : "secondary";
   };
+
+  const { calculateTotalOrder, toggleCart, calculateTotalQuantityOrder } =
+    useCart();
+  const totalQuantity = calculateTotalQuantityOrder();
 
   return (
     <div className="relative z-50 mt-[-1.5rem] rounded-t-3xl bg-white">
@@ -71,6 +78,23 @@ const RestaurantCategories = ({ restaurant }: RestaurantCategoriesProps) => {
       </ScrollArea>
       <h3 className="px-5 pt-2 font-semibold">{activeCategory.name}</h3>
       <Products products={activeCategory.products} />
+      {totalQuantity > 0 && (
+        <div className="fixed bottom-0 left-0 right-0 flex w-full items-center justify-between border border-t bg-white px-3 py-5">
+          <div>
+            <p className="text-xs text-muted-foreground">Total dos pedidos</p>
+            <p className="text-sm font-semibold">
+              {formatCurrency(calculateTotalOrder())}
+              <span className="text-xs font-normal text-muted-foreground">
+                / {totalQuantity} {totalQuantity > 1 ? "itens" : "item"}
+              </span>
+            </p>
+          </div>
+          <Button onClick={toggleCart} variant="default">
+            Ver sacola
+          </Button>
+          <CartSheet />
+        </div>
+      )}
     </div>
   );
 };
