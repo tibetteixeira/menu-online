@@ -81,7 +81,12 @@ const UserOrderForm = () => {
         redirectToOrderPage(data.cpf, slug);
       });
     } catch (error) {
-      toast.error(`Erro ao realizar pedido`);
+      const errorMsg = "Erro ao realizar pedido";
+      if (error instanceof Error) {
+        toast.error(errorMsg + ": " + error.message);
+      } else {
+        toast.error(errorMsg);
+      }
     }
   };
 
