@@ -18,6 +18,10 @@ const OrdersPage = async ({ params, searchParams }: OrdersPageProps) => {
     return <CpfForm />;
   }
 
+  if (orders.length === 0) {
+    return <CpfForm error="Este CPF não possui pedido" />;
+  }
+
   return (
     <div>
       <ButtonsHeader onlyBackButton={true} />

@@ -1,7 +1,8 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { usePathname, useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { PatternFormat } from "react-number-format";
 import { toast } from "sonner";
@@ -48,27 +49,37 @@ const formSchema = z.object({
 type FormSchema = z.infer<typeof formSchema>;
 
 const CpfForm = ({ error }: CpfFormProps) => {
+  const { slug } = useParams<{ slug: string }>();
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       cpf: "",
     },
   });
-  console.log(error);
 
-  if (error) {
-    toast.error(error);
-  }
+  const [showToast, setShowToast] = useState(false);
+
+  const handleConfirmCpf = () => {
+    setShowToast(true); // Ativa o toast
+  };
+
+  useEffect(() => {
+    if (showToast && error) {
+      toast.error(error);
+      setShowToast(false);
+    }
+  }, [showToast, error]);
 
   const router = useRouter();
   const pathName = usePathname();
 
   const onSubmit = (data: FormSchema) => {
+    handleConfirmCpf();
     router.push(`${pathName}?cpf=${removePontuation(data.cpf)}`);
   };
 
   const handleCancel = () => {
-    router.back();
+    router.replace(`/${slug}`);
   };
 
   return (
@@ -78,7 +89,9 @@ const CpfForm = ({ error }: CpfFormProps) => {
         <DrawerContent>
           <DrawerHeader>
             <DrawerTitle>Visualizar pedidos</DrawerTitle>
-            <DrawerDescription>Insira seu CPF abaixo para visualizar seus pedidos</DrawerDescription>
+            <DrawerDescription>
+              Insira seu CPF abaixo para visualizar seus pedidos
+            </DrawerDescription>
           </DrawerHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
