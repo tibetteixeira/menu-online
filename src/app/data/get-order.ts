@@ -9,7 +9,11 @@ export const getOrdersByUser = async (userCPF: string, slug: string) => {
       },
     },
     include: {
-      orderItems: true,
+      orderItems: {
+        include: {
+          product: true,
+        },
+      },
       restaurant: true,
     },
     orderBy: {
